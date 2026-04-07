@@ -138,13 +138,13 @@ The API supports the following metadata record types:
 
 > [!NOTE]
 > TBD:
-> 1. Add facets/aggregations to the response
-> 1. Add sort options
-> 1. Decide upon the properties per metadata record that must be returned in the response
-> 1. Add filters to the request (and turn it into a full `/search` endpoint, with a `POST`)?
-> 1. Can this endpoint be used for autocompletion? Or is an explicit `/autocomplete` necessary (e.g. different parameters, different response)?
 > 1. Is there a query syntax standard that we can use (e.g. wildcards)?
-> 1. Is there a need to search in all metadata records in a given search action, e.g. in both heritage objects and persons? Or would a search per record type suffice?
+> 1. Add filters to the request (and turn it into a full `/search` endpoint, with a `POST`)?
+> 1. Add sort options to the request
+> 1. User a cursor for pagination, instead of `page` and `startIndex`?
+> 1. Add facets/aggregations to the response
+> 1. Decide upon the properties per metadata record that must be returned in the response
+> 1. Can this endpoint be used for autocompletion? Or is an explicit `/autocomplete` necessary (e.g. different parameters, different response)?
 
 ### Get the metadata record of a heritage object
 
