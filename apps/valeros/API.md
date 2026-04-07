@@ -26,6 +26,9 @@
 1. The API uses [JSON-LD 1.1](https://www.w3.org/TR/json-ld/) as method for serializing data
 1. The API primarily uses [SCHEMA-AP-NDE](https://docs.nde.nl/schema-profile/) as its data model, and parts of [Activity Streams](https://www.w3.org/TR/activitystreams-core/)
 
+> [!NOTE]
+> TODO: state the design goals of the API
+
 ## Alignment with other API specifications
 
 The API is *not* yet aligned with existing API specifications, such as:
@@ -68,7 +71,7 @@ The API supports the following metadata record types:
 1. Persons
 1. Images
 1. Terms
-1. Data provider
+1. Organizations
 
 ## Endpoints
 
@@ -133,7 +136,7 @@ The API supports the following metadata record types:
 }
 ```
 
-> [!IMPORTANT]
+> [!NOTE]
 > TBD:
 > 1. Add facets/aggregations to the response
 > 1. Add sort options
@@ -223,7 +226,7 @@ The API supports the following metadata record types:
 }
 ```
 
-> [!IMPORTANT]
+> [!NOTE]
 > TBD:
 > 1. Add data about the original data provider, e.g. its name
 > 1. How to refer to the original metadata records, as provided by data providers? For example: `isBasedOn`?
