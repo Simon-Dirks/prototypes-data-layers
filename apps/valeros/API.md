@@ -16,8 +16,9 @@
   - [Get a single heritage object](#get-a-single-heritage-object)
   - [Get a single place](#get-a-single-place)
   - [Get a single person](#get-a-single-person)
+  - [Get a single occupation](#get-a-single-occupation)
   - [Get a single organization](#get-a-single-organization)
-  - [Get a single image](#get-a-single-image)
+  - [Get a single media object](#get-a-single-media-object)
   - [Get a single term](#get-a-single-term)
   - [Get the JSON-LD context](#get-the-json-ld-context)
 
@@ -70,7 +71,8 @@ The API supports the following resource types:
 1. Heritage objects
 1. Places
 1. Persons
-1. Images
+1. Occupations
+1. Media objects
 1. Terms
 1. Organizations
 
@@ -127,15 +129,16 @@ The API supports the following resource types:
   "orderedItems": [
     {
       "id": "https://example.org/v1/heritage-objects/{id}",
-      "type": "CreativeWork",
+      "type": ["CreativeWork", "Painting"],
       "name": "Fysisch laboratorium Utrecht 1896",
       "description": "Zwart-wit foto van een kamer in het fysisch laboratorium te Utrecht, met rechts de amanuensis dhr. Marinus Pieter Filbri, in het midden de toen nog assistent Van Huffel en links de instrumentmaker G. Koolschijn, Utrecht, 1896.",
       "associatedMedia": [
         {
-          "id": "https://example.org/v1/images/{id}",
-          "type": "ImageObject",
+          "id": "https://example.org/v1/media-objects/{id}",
+          "type": ["MediaObject", "ImageObject"],
           "contentUrl": "https://collections.uu.nl/IIIF/33832/full/max/0/default.jpg",
           "thumbnailUrl": "https://collections.uu.nl/IIIF/33832/full/!512,512/0/default.jpg"
+          // ... other properties (TBD)
         }
       ]
       // ... other properties (TBD)
@@ -231,12 +234,22 @@ The API supports the following resource types:
   ],
   "associatedMedia": [
     {
-      "id": "https://example.org/v1/images/{id}",
-      "type": "ImageObject",
+      "id": "https://example.org/v1/media-objects/{id}",
+      "type": ["MediaObject", "ImageObject"],
       "contentUrl": "https://collections.uu.nl/IIIF/33832/full/max/0/default.jpg",
       "thumbnailUrl": "https://collections.uu.nl/IIIF/33832/full/!512,512/0/default.jpg"
     }
   ],
+  "contentLocation": [
+    {
+      "id": "https://example.org/v1/places/{id}",
+      "type": "Place",
+      "name": "Physisch Laboratorium"
+    }
+  ],
+  "temporalCoverage": "1896",
+  "size": "74 × 92 cm",
+  "text": "Zwart-wit foto van een kamer in het fysisch laboratorium te Utrecht",
   "isBasedOn": "https://n2t.net/ark:/40020/collect100"
 }
 ```
@@ -352,6 +365,40 @@ The API supports the following resource types:
 }
 ```
 
+### Get a single occupation
+
+#### Request
+
+`GET /v1/occupations/{id}`
+
+##### Headers
+
+| Name            | Value                                      |
+| --------------- | ------------------------------------------ |
+| Accept          | `application/ld+json,application/json,*/*` |
+| Accept-Language | `nl`                                       |
+
+#### Response
+
+##### Headers
+
+| Name             | Value                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| Status           | `200 OK`                                                                                                   |
+| Content-Type     | `application/json`                                                                                         |
+| Content-Language | `nl`                                                                                                       |
+| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
+
+##### Example body
+
+```json
+{
+  "id": "https://example.org/v1/occupations/{id}",
+  "type": "Occupation",
+  "name": "Carpenter"
+}
+```
+
 ### Get a single organization
 
 #### Request
@@ -391,11 +438,11 @@ The API supports the following resource types:
 }
 ```
 
-### Get a single image
+### Get a single media object
 
 #### Request
 
-`GET /v1/images/{id}`
+`GET /v1/media-objects/{id}`
 
 ##### Headers
 
@@ -419,12 +466,16 @@ The API supports the following resource types:
 
 ```json
 {
-  "id": "https://example.org/v1/images/{id}",
-  "type": "ImageObject",
+  "id": "https://example.org/v1/media-objects/{id}",
+  "type": ["MediaObject", "ImageObject"],
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "copyrightNotice": "© 2025 Example Museum, with permission from Ph. Otographer",
   "contentUrl": "https://collections.uu.nl/IIIF/33832/full/max/0/default.jpg",
   "thumbnailUrl": "https://collections.uu.nl/IIIF/33832/full/!512,512/0/default.jpg",
-  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
-  "copyrightNotice": "© 2025 Example Museum, with permission from Ph. Otographer"
+  "isBasedOn": {
+    "id": "https://collections.uu.nl/IIIF/33832",
+    "encodingFormat": "application/ld+json;profile='http://iiif.io/api/image/3/context.json'"
+  }
 }
 ```
 
