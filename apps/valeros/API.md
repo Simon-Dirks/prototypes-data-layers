@@ -151,7 +151,16 @@ The API supports the following resource types:
           "contentUrl": "https://collections.uu.nl/IIIF/33832/full/max/0/default.jpg",
           "thumbnailUrl": "https://collections.uu.nl/IIIF/33832/full/!512,512/0/default.jpg"
         }
-      ]
+      ],
+      "sdLicense": {
+        "id": "https://example.org/v1/licenses/{id}",
+        "name": "Creative Commons: publieke domein"
+      },
+      "sdPublisher": {
+        "id": "https://example.org/v1/organizations/{id}",
+        "type": "Organization",
+        "name": "Example Museum"
+      }
     },
     {
       // ... other items
@@ -160,17 +169,15 @@ The API supports the following resource types:
 }
 ```
 
-> [!IMPORTANT]
-> The endpoint only returns information per item that is required according to [SCHEMA-AP-NDE](https://docs.nde.nl/schema-profile/).
-
 > [!NOTE]
-> TBD:
+> To discuss:
 >
+> 1. The endpoint only returns information per item that is required according to [SCHEMA-AP-NDE](https://docs.nde.nl/schema-profile/) and [Requirements for Datasets](https://docs.nde.nl/requirements-datasets/)
 > 1. Is there a query syntax standard that we can use (e.g. wildcards)?
 > 1. Can this endpoint be used for autocompletion? Or is an explicit `/autocomplete` necessary (e.g. different parameters, different response)?
 > 1. Add a dedicated `/search` endpoint, with a `POST`?
 >
-> TODO:
+> To do:
 >
 > 1. Add filters to the request
 > 1. Add sort options to the request
@@ -271,19 +278,22 @@ The API supports the following resource types:
     "name": "Creative Commons: publieke domein"
   },
   "sdDatePublished": "2026-04-08T13:35:03Z",
-  "isBasedOn": "https://n2t.net/ark:/40020/collect100"
+  "sdPublisher": {
+    "id": "https://example.org/v1/organizations/{id}",
+    "type": "Organization",
+    "name": "Example Museum"
+  },
+  "isBasedOn": {
+    "id": "https://n2t.net/ark:/40020/collect100",
+    "type": "CreativeWork"
+  }
 }
 ```
 
 > [!NOTE]
-> TBD:
+> To discuss:
 >
-> 1. How to refer to the original resource, as provided by data providers? For example: `isBasedOn`?
->
-> TODO:
->
-> 1. Add data about the original data provider, e.g. its name
-> 1. Add data about the original dataset?
+> 1. The endpoint does not refer to the original dataset of which the information about the resource is a part: a 'dataset' is not a relevant concept for data consumers?
 
 ### Get a single place
 
@@ -533,7 +543,10 @@ The API supports the following resource types:
   "id": "https://example.org/v1/licenses/{id}",
   "type": "CreativeWork",
   "name": "Creative Commons: publieke domein",
-  "url": "https://creativecommons.org/public-domain/cc0/"
+  "isBasedOn": {
+    "id": "https://creativecommons.org/public-domain/cc0/",
+    "type": "CreativeWork"
+  }
 }
 ```
 
