@@ -16,6 +16,7 @@
   - [Get a single heritage object](#get-a-single-heritage-object)
   - [Get a single place](#get-a-single-place)
   - [Get a single person](#get-a-single-person)
+  - [Get a single organization](#get-a-single-organization)
   - [Get a single image](#get-a-single-image)
   - [Get a single term](#get-a-single-term)
   - [Get the JSON-LD context](#get-the-json-ld-context)
@@ -328,7 +329,65 @@ The API supports the following resource types:
 {
   "id": "https://example.org/v1/persons/{id}",
   "type": "Person",
-  "name": "John Doe"
+  "name": "John Doe",
+  "birthPlace": {
+    "id": "https://example.org/v1/places/{id}",
+    "type": "Place",
+    "name": "Utrecht"
+  },
+  "birthDate": "1871-01-01",
+  "deathPlace": {
+    "id": "https://example.org/v1/places/{id}",
+    "type": "Place",
+    "name": "Amsterdam"
+  },
+  "deathDate": "1941-12-31",
+  "hasOccupation": [
+    {
+      "id": "https://example.org/v1/occupations/{id}",
+      "type": "Occupation",
+      "name": "Carpenter"
+    }
+  ]
+}
+```
+
+### Get a single organization
+
+#### Request
+
+`GET /v1/organizations/{id}`
+
+##### Headers
+
+| Name            | Value                                      |
+| --------------- | ------------------------------------------ |
+| Accept          | `application/ld+json,application/json,*/*` |
+| Accept-Language | `nl`                                       |
+
+#### Response
+
+##### Headers
+
+| Name             | Value                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| Status           | `200 OK`                                                                                                   |
+| Content-Type     | `application/json`                                                                                         |
+| Content-Language | `nl`                                                                                                       |
+| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
+
+##### Example body
+
+```json
+{
+  "id": "https://example.org/v1/organizations/{id}",
+  "type": "Organization",
+  "name": "Example Museum",
+  "location": {
+    "id": "https://example.org/v1/places/{id}",
+    "type": "Place",
+    "name": "Office location"
+  }
 }
 ```
 
@@ -363,7 +422,9 @@ The API supports the following resource types:
   "id": "https://example.org/v1/images/{id}",
   "type": "ImageObject",
   "contentUrl": "https://collections.uu.nl/IIIF/33832/full/max/0/default.jpg",
-  "thumbnailUrl": "https://collections.uu.nl/IIIF/33832/full/!512,512/0/default.jpg"
+  "thumbnailUrl": "https://collections.uu.nl/IIIF/33832/full/!512,512/0/default.jpg",
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "copyrightNotice": "© 2025 Example Museum, with permission from Ph. Otographer"
 }
 ```
 
