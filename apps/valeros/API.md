@@ -12,6 +12,7 @@
 - [Errors](#errors)
 - [Resource types](#resource-types)
 - [Endpoints](#endpoints)
+  - [Headers](#headers)
   - [List heritage objects in a paged collection](#list-heritage-objects-in-a-paged-collection)
   - [Get a single heritage object](#get-a-single-heritage-object)
   - [Get a single place](#get-a-single-place)
@@ -33,7 +34,8 @@
 >
 > To do:
 >
-> 1. State the design goals of the API
+> 1. State the design goals of the API (e.g. use of JSON, use of LD, generic/blueprint)
+> 1. How to model the provenance trail of the data, e.g. the original datasets that were used? Use [PROV-O](https://www.w3.org/TR/prov-o/)?
 > 1. Think about CORS and e.g. the `Access-Control-Allow-Origin` header
 > 1. Create [JSON Schemas](https://json-schema.org/)?
 
@@ -86,37 +88,41 @@ The API supports the following resource types:
 
 ## Endpoints
 
+### Headers
+
+All endpoints accept and return the same HTTP headers:
+
+#### Request headers
+
+| Name            | Value                                      | Cardinality |
+| --------------- | ------------------------------------------ | ----------- |
+| Accept          | `application/ld+json,application/json,*/*` | 0 or 1      |
+| Accept-Language | E.g. `nl` or `en`                          | 0 or 1      |
+
+#### Response headers
+
+| Name             | Value                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| Status           | E.g. `200 OK`                                                                                              |
+| Content-Type     | `application/json`                                                                                         |
+| Content-Language | E.g. `nl` or `en`                                                                                          |
+| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
+
 ### List heritage objects in a paged collection
 
 #### Request
 
 `GET /v1/heritage-objects/page/{page}?size={size}&q={q}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 ##### URI parameters
 
-| Property | Data type | Required | Description              |
-| -------- | --------- | -------- | ------------------------ |
-| `page`   | Number    | Yes      | Page index               |
-| `size`   | Number    | No       | Number of items per page |
-| `q`      | String    | No       | Search query             |
+| Property | Data type | Cardinality | Description              |
+| -------- | --------- | ----------- | ------------------------ |
+| `page`   | Number    | 1           | Page index               |
+| `size`   | Number    | 0 or 1      | Number of items per page |
+| `q`      | String    | 0 or 1      | Search query             |
 
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -200,23 +206,7 @@ The API supports the following resource types:
 
 `GET /v1/heritage-objects/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -313,23 +303,7 @@ The API supports the following resource types:
 
 `GET /v1/places/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -360,23 +334,7 @@ The API supports the following resource types:
 
 `GET /v1/organizations/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -399,23 +357,7 @@ The API supports the following resource types:
 
 `GET /v1/persons/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -452,23 +394,7 @@ The API supports the following resource types:
 
 `GET /v1/occupations/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -486,23 +412,7 @@ The API supports the following resource types:
 
 `GET /v1/media-objects/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -531,23 +441,7 @@ The API supports the following resource types:
 
 `GET /v1/licenses/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
@@ -569,23 +463,7 @@ The API supports the following resource types:
 
 `GET /v1/terms/{id}`
 
-##### Headers
-
-| Name            | Value                                      |
-| --------------- | ------------------------------------------ |
-| Accept          | `application/ld+json,application/json,*/*` |
-| Accept-Language | `nl`                                       |
-
 #### Response
-
-##### Headers
-
-| Name             | Value                                                                                                      |
-| ---------------- | ---------------------------------------------------------------------------------------------------------- |
-| Status           | `200 OK`                                                                                                   |
-| Content-Type     | `application/json`                                                                                         |
-| Content-Language | `nl`                                                                                                       |
-| Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 
 ##### Example body
 
