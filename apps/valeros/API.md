@@ -168,7 +168,7 @@ All endpoints accept and return the same HTTP headers:
 
 Design decisions:
 
-1. The endpoint returns all properties of all items, both required and optional properties, according to [SCHEMA-AP-NDE](https://docs.nde.nl/schema-profile/). Revisit this decision if there are functional and/or technical reasons (e.g. over-fetching, performance).
+1. The endpoint returns all (first layer) properties of an item, both required and optional properties, according to [SCHEMA-AP-NDE](https://docs.nde.nl/schema-profile/). Revisit this decision if there are functional and/or technical reasons (e.g. over-fetching, performance).
 1. The endpoint supports all properties for filtering, both required and optional properties.
 1. There is no query syntax standard for denoting the `q`, only de facto ones. For now the API supports parts of the [simple query string syntax](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-simple-query-string-query#simple-query-string-syntax) of Elasticsearch, notably the wildcard (`*`)
 1. The API does not have a dedicated `/search` and `/autocomplete` endpoint - the regular 'list' endpoint can be used. Revisit this decision if there are functional and/or technical reasons.
@@ -255,21 +255,23 @@ Design decisions:
   "temporalCoverage": "1896",
   "size": "74 × 92 cm",
   "text": "Zwart-wit foto van een kamer in het fysisch laboratorium te Utrecht",
-  "isPartOf": {
-    "id": "https://example.org/v1/datasets/{id}",
-    "type": "Dataset",
-    "name": "Example Dataset",
-    "publisher": {
-      "id": "https://example.org/v1/organizations/{id}",
-      "type": "Organization",
-      "name": "Example Museum"
-    },
-    "license": {
-      "id": "https://example.org/v1/licenses/{id}",
-      "type": "CreativeWork",
-      "name": "Creative Commons: publieke domein"
+  "isPartOf": [
+    {
+      "id": "https://example.org/v1/datasets/{id}",
+      "type": "Dataset",
+      "name": "Example Dataset",
+      "publisher": {
+        "id": "https://example.org/v1/organizations/{id}",
+        "type": "Organization",
+        "name": "Example Museum"
+      },
+      "license": {
+        "id": "https://example.org/v1/licenses/{id}",
+        "type": "CreativeWork",
+        "name": "Creative Commons: publieke domein"
+      }
     }
-  },
+  ],
   "sdDatePublished": "2026-04-08T13:35:03Z",
   "isBasedOn": {
     "id": "https://n2t.net/ark:/40020/collect100",
