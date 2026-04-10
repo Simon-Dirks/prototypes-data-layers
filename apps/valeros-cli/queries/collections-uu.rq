@@ -1,0 +1,41 @@
+PREFIX schema: <https://schema.org/>
+
+CONSTRUCT {
+  ?cho a schema:CreativeWork ;
+    schema:name ?name ;
+    schema:isPartOf ?dataset ;
+    schema:description ?description ;
+    schema:dateCreated ?dateCreated ;
+    schema:creator ?creator ;
+    schema:creator ?genre .
+
+  ?dataset a ?datasetType .
+
+  ?creator a ?creatorType ;
+    schema:name ?creatorName .
+
+  ?genre a ?genreType ;
+    schema:name ?genreName .
+}
+WHERE {
+  ?cho a schema:CreativeWork ;
+    schema:name ?name ;
+    schema:isPartOf ?dataset .
+
+  ?dataset a ?datasetType .
+
+  OPTIONAL { ?cho schema:description ?description }
+  OPTIONAL { ?cho schema:dateCreated ?dateCreated }
+
+  OPTIONAL {
+    ?cho schema:creator ?creator .
+    ?creator a ?creatorType ;
+      schema:name ?creatorName .
+  }
+
+  OPTIONAL {
+    ?cho schema:genre ?genre .
+    ?genre a ?genreType ;
+      schema:name ?genreName .
+  }
+}

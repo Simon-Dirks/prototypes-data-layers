@@ -5,5 +5,8 @@ export default defineConfig({
   plugins: [nitro()],
   nitro: {
     serverEntry: "src/server.ts",
+    output: {
+      dir: "dist",
+    },
   },
 });
