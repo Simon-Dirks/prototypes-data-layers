@@ -1,14 +1,14 @@
 import { defineCommand } from "citty";
-import { Preparer } from "./preparer.js";
+import { toJsonLinesFiles } from "./preparer.js";
 
 export const buildArgs = {
-  inputfile: {
+  inputFile: {
     type: "string",
     description: "JSON-LD file with data",
   },
-  outputfile: {
+  outputDir: {
     type: "string",
-    description: "JSON Lines file with data",
+    description: "Directory for storing the JSON Lines files with data",
   },
 } as const;
 
@@ -19,10 +19,9 @@ export default defineCommand({
   },
   args: buildArgs,
   async run({ args }) {
-    const preparer = new Preparer({
-      inputFile: args.inputfile!,
-      outputFile: args.outputfile!,
+    await toJsonLinesFiles({
+      inputFile: args.inputFile!,
+      outputDir: args.outputDir!,
     });
-    await preparer.run();
   },
 });

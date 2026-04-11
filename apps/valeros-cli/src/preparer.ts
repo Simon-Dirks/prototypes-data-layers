@@ -1,59 +1,77 @@
 import { createReadStream, createWriteStream } from "node:fs";
-import { pino } from "pino";
 import { chain } from "stream-chain";
 import { pick } from "stream-json/filters/pick.js";
 import { streamArray } from "stream-json/streamers/stream-array.js";
 import { z } from "zod";
-import { heritageObjectSchema } from "./definitions.js";
+import { heritageObjectJsonLdSchema } from "./definitions.js";
 import { EOL } from "node:os";
+import path from "node:path";
 
-const constructorInputSchema = z.object({
+const toJsonLinesFileInputSchema = z.object({
   inputFile: z.string(),
   outputFile: z.string(),
+  schema: z.instanceof(z.ZodType),
 });
 
-type ConstructorInput = z.input<typeof constructorInputSchema>;
+type ToJsonLinesFileInput = z.input<typeof toJsonLinesFileInputSchema>;
 
-// Prepares data from a JSON-LD file for ingestion into the search index
-export class Preparer {
-  private readonly logger;
-  private readonly inputFile;
-  private readonly outputFile;
+export async function toJsonLinesFile(input: ToJsonLinesFileInput) {
+  const opts = toJsonLinesFileInputSchema.parse(input);
 
-  constructor(input: ConstructorInput) {
-    const opts = constructorInputSchema.parse(input);
+  const writeStream = createWriteStream(opts.outputFile);
+  const schema = z.object({ value: input.schema });
 
-    this.logger = pino();
-    this.inputFile = opts.inputFile;
-    this.outputFile = opts.outputFile;
-  }
+  const writeResourceToJsonlFile = (data: any) => {
+    const result = schema.safeParse(data);
+    if (!result.success) {
+      // this.logger.warn({ record: data }, `Ignoring invalid resource`);
+      return;
+    }
 
-  async run() {
-    const writeStream = createWriteStream(this.outputFile);
+    const resource = result.data.value;
 
-    const writeResourceToJsonlFile = (data: any) => {
-      const result = heritageObjectSchema.safeParse(data);
-      if (!result.success) {
-        // this.logger.warn({ record: data }, `Ignoring invalid resource`);
-        return;
-      }
+    // TODO: handle back-pressure
+    writeStream.write(JSON.stringify(resource) + EOL);
+  };
 
-      const resource = result.data.value;
+  await new Promise<void>((resolve, reject) => {
+    const stream = createReadStream(opts.inputFile);
+    const pipeline = chain([stream, pick.withParser({ filter: "@graph" }), streamArray()]);
 
-      // TODO: handle back-pressure
-      writeStream.write(JSON.stringify(resource) + EOL);
-    };
-
-    await new Promise((resolve, reject) => {
-      // Stream the resources in the JSON-LD file
-      const stream = createReadStream(this.inputFile);
-      const pipeline = chain([stream, pick.withParser({ filter: "@graph" }), streamArray()]);
-
-      pipeline.on("end", resolve);
-      pipeline.on("error", reject);
-      pipeline.on("data", writeResourceToJsonlFile);
+    pipeline.on("end", () => {
+      writeStream.end();
+      resolve();
     });
 
-    writeStream.end();
+    pipeline.on("error", () => {
+      writeStream.end();
+      reject();
+    });
+
+    pipeline.on("data", writeResourceToJsonlFile);
+  });
+}
+
+const toJsonLinesFilesInputSchema = z.object({
+  inputFile: z.string(),
+  outputDir: z.string(),
+});
+
+type ToJsonLinesFilesInput = z.input<typeof toJsonLinesFilesInputSchema>;
+
+export async function toJsonLinesFiles(input: ToJsonLinesFilesInput) {
+  const opts = toJsonLinesFilesInputSchema.parse(input);
+
+  const schemas = [heritageObjectJsonLdSchema];
+
+  for (let schema of schemas) {
+    const meta = schema.meta();
+    const outputFile = path.join(input.outputDir, `${meta?.title}.jsonl`);
+
+    await toJsonLinesFile({
+      inputFile: opts.inputFile,
+      outputFile: outputFile,
+      schema,
+    });
   }
 }
