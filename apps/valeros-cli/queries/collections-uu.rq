@@ -52,8 +52,9 @@ CONSTRUCT {
     schema:encodingFormat "application/ld+json;profile='http://iiif.io/api/image/3/context.json'" .
 }
 WHERE {
-  #Example:
+  #Examples:
   #BIND(<https://n2t.net/ark:/40020/collect163299> AS ?cho)
+  #BIND(<https://n2t.net/ark:/40020/collect95460> AS ?cho)
 
   ?cho a schema:CreativeWork ;
     schema:name ?name ;
