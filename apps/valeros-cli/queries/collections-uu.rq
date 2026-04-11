@@ -55,13 +55,13 @@ CONSTRUCT {
     ext:name ?contentLocationName .
 
   ?associatedMediaId a ?associatedMediaType ;
+    ext:license ?mediaObjectLicense ;
     ext:contentUrl ?contentUrl ;
     ext:thumbnailUrl ?thumbnailUrl ;
     ext:isBasedOn ?isBasedOn .
 
   ?isBasedOn a ext:MediaObject ;
-    # Missing in the source data
-    ext:encodingFormat "application/ld+json;profile='http://iiif.io/api/image/3/context.json'" .
+    ext:encodingFormat ?encodingFormat .
 }
 WHERE {
   #Examples:
@@ -118,10 +118,17 @@ WHERE {
     schema:thumbnailUrl ?thumbnailUrl .
   BIND(IRI(CONCAT("https://example.org/media-objects/", MD5(STR(?contentUrl)))) AS ?associatedMediaId)
 
+  # Missing in the source data - assume it's the same license as the dataset
+  BIND(?license AS ?mediaObjectLicense)
+
   # IIIF support is optional
   OPTIONAL {
     ?associatedMedia schema:isBasedOn ?isBasedOnRaw .
+
     # Remove the trailing "/info.json"
     BIND(IRI(STRBEFORE(STR(?isBasedOnRaw), "/info.json")) AS ?isBasedOn)
+
+    # Missing in the source data
+    BIND("application/ld+json;profile='http://iiif.io/api/image/3/context.json'" AS ?encodingFormat)
   }
 }

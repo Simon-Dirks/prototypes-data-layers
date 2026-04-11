@@ -11,8 +11,9 @@ import {
   materialJsonLdSchema,
   creatorJsonLdSchema,
   datasetJsonLdSchema,
-  organizationsJsonLdSchema,
   licensesJsonLdSchema,
+  mediaObjectJsonLdSchema,
+  publishersJsonLdSchema,
 } from "./definitions.js";
 import { EOL } from "node:os";
 import path from "node:path";
@@ -106,8 +107,12 @@ export async function toJsonLinesFiles(input: ToJsonLinesFilesInput) {
       schema: materialJsonLdSchema,
     },
     {
-      name: "organizations.jsonl",
-      schema: organizationsJsonLdSchema,
+      name: "media-objects.jsonl",
+      schema: mediaObjectJsonLdSchema,
+    },
+    {
+      name: "publishers.jsonl",
+      schema: publishersJsonLdSchema,
     },
   ];
 
