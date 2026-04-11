@@ -5,10 +5,12 @@ export const buildArgs = {
   inputFile: {
     type: "string",
     description: "JSON-LD file with data",
+    required: true,
   },
   outputDir: {
     type: "string",
     description: "Directory for storing the JSON Lines files with data",
+    required: true,
   },
 } as const;
 
