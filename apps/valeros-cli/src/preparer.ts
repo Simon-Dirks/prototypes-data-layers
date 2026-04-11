@@ -9,6 +9,9 @@ import {
   heritageObjectJsonLdSchema,
   contentLocationJsonLdSchema,
   materialJsonLdSchema,
+  creatorJsonLdSchema,
+  datasetJsonLdSchema,
+  organizationsJsonLdSchema,
 } from "./definitions.js";
 import { EOL } from "node:os";
 import path from "node:path";
@@ -74,6 +77,18 @@ export async function toJsonLinesFiles(input: ToJsonLinesFilesInput) {
       schema: additionalTypeJsonLdSchema,
     },
     {
+      name: "content-locations.jsonl",
+      schema: contentLocationJsonLdSchema,
+    },
+    {
+      name: "creators.jsonl",
+      schema: creatorJsonLdSchema,
+    },
+    {
+      name: "datasets.jsonl",
+      schema: datasetJsonLdSchema,
+    },
+    {
       name: "genres.jsonl",
       schema: genreJsonLdSchema,
     },
@@ -82,12 +97,12 @@ export async function toJsonLinesFiles(input: ToJsonLinesFilesInput) {
       schema: heritageObjectJsonLdSchema,
     },
     {
-      name: "content-locations.jsonl",
-      schema: contentLocationJsonLdSchema,
-    },
-    {
       name: "materials.jsonl",
       schema: materialJsonLdSchema,
+    },
+    {
+      name: "organizations.jsonl",
+      schema: organizationsJsonLdSchema,
     },
   ];
 

@@ -22,7 +22,8 @@ CONSTRUCT {
     ext:contentLocationNames ?contentLocationName ;
     ext:associatedMedia ?associatedMediaId .
 
-  ?dataset a ?datasetType ;
+  ?dataset a ext:Dataset ;
+    ext:name "Collectie Universiteitsmuseum Utrecht"@nl ;
     ext:license <http://standaarden.overheid.nl/owms/terms/geslotenlicentie> ;
     ext:publisher <https://www.umu.nl/> .
 
@@ -65,7 +66,7 @@ WHERE {
     schema:name ?name ;
     schema:isPartOf ?dataset .
 
-  ?dataset a ?datasetType .
+  ?dataset a schema:Dataset .
 
   ?cho schema:creator ?creator .
   ?creator schema:name ?creatorName .
