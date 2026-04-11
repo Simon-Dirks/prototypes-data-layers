@@ -35,13 +35,12 @@ async function toJsonLinesFile(input: ToJsonLinesFileInput) {
   const writeResourceToJsonlFile = (data: any) => {
     const result = schema.safeParse(data);
     if (!result.success) {
-      // this.logger.warn({ record: data }, `Ignoring invalid resource`);
       return;
     }
 
     const resource = result.data.value;
 
-    // TODO: handle back-pressure
+    // TODO: handle backpressure
     writeStream.write(JSON.stringify(resource) + EOL);
   };
 

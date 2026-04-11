@@ -78,7 +78,12 @@ export const genreJsonLdSchema = z
 export const heritageObjectJsonLdSchema = z
   .object({
     "@id": z.string(),
-    "@type": z.literal("ext:CreativeWork"),
+    "@type": z.preprocess(
+      (value) => (Array.isArray(value) ? value : [value]),
+      z.array(
+        z.string().transform((data) => data.replace("schema:", "")), // Remove prefix
+      ),
+    ),
     "ext:name": valueSchema,
     "ext:dateCreated": valueSchema.optional(),
     "ext:description": valueSchema.optional(),
@@ -102,7 +107,7 @@ export const heritageObjectJsonLdSchema = z
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
-    type: "CreativeWork",
+    type: data["@type"],
     name: data["ext:name"]?.join("; "), // Merge into one string
     date_created: data["ext:dateCreated"]?.join("; "), // Merge into one string
     description: data["ext:description"]?.join("; "), // Merge into one string

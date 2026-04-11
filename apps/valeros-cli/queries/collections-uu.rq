@@ -5,7 +5,7 @@ PREFIX ext: <https://example.org/>
 PREFIX schema: <https://schema.org/>
 
 CONSTRUCT {
-  ?cho a ext:CreativeWork ;
+  ?cho a ?choType ;
     ext:name ?name ;
     ext:isPartOf ?dataset ;
     ext:datasetName ?datasetName ;
@@ -68,7 +68,7 @@ WHERE {
   #BIND(<https://n2t.net/ark:/40020/collect163299> AS ?cho)
   #BIND(<https://n2t.net/ark:/40020/collect95460> AS ?cho)
 
-  ?cho a schema:CreativeWork ;
+  ?cho a ?choType ;
     schema:name ?name ;
     schema:isPartOf ?originalDataset .
 
