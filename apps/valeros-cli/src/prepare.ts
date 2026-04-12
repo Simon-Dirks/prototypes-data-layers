@@ -11,21 +11,25 @@ function createIdFrom(id: string) {
   return createHash("md5").update(id).digest("hex");
 }
 
-const idSchema = z.preprocess(
+const idSchemaOne = z.object({ "@id": z.string() }).transform((data) => data["@id"]);
+
+const idSchemaMultiple = z.preprocess(
   (value) => (Array.isArray(value) ? value : [value]),
-  z.array(z.object({ "@id": z.string() }).transform((data) => data["@id"])),
+  z.array(idSchemaOne),
 );
 
-const valueSchema = z.preprocess(
+const valueSchemaOne = z.object({ "@value": z.string() }).transform((data) => data["@value"]);
+
+const valueSchemaMultiple = z.preprocess(
   (value) => (Array.isArray(value) ? value : [value]),
-  z.array(z.object({ "@value": z.string() }).transform((data) => data["@value"])),
+  z.array(valueSchemaOne),
 );
 
 const additionalTypeJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:AdditionalType"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -37,7 +41,7 @@ const contentLocationJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:ContentLocation"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -49,7 +53,7 @@ const creatorJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:Creator"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -61,7 +65,7 @@ const datasetJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:Dataset"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -73,7 +77,7 @@ const genreJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:Genre"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -90,26 +94,26 @@ const heritageObjectJsonLdSchema = z
         z.string().transform((data) => data.replace("schema:", "")), // Remove prefix
       ),
     ),
-    "ext:name": valueSchema,
-    "ext:dateCreated": valueSchema.optional(),
-    "ext:description": valueSchema.optional(),
-    "ext:additionalType": idSchema.optional(),
-    "ext:additionalTypeName": valueSchema.optional(),
-    "ext:associatedMedia": idSchema.optional(),
-    "ext:contentLocation": idSchema.optional(),
-    "ext:contentLocationName": valueSchema.optional(),
-    "ext:creator": idSchema,
-    "ext:creatorName": valueSchema,
-    "ext:isPartOf": idSchema,
-    "ext:datasetName": valueSchema,
-    "ext:genre": idSchema.optional(),
-    "ext:genreName": valueSchema.optional(),
-    "ext:license": idSchema,
-    "ext:licenseName": valueSchema,
-    "ext:material": idSchema.optional(),
-    "ext:materialName": valueSchema.optional(),
-    "ext:publisher": idSchema,
-    "ext:publisherName": valueSchema,
+    "ext:name": valueSchemaMultiple,
+    "ext:dateCreated": valueSchemaMultiple.optional(),
+    "ext:description": valueSchemaMultiple.optional(),
+    "ext:additionalType": idSchemaMultiple.optional(),
+    "ext:additionalTypeName": valueSchemaMultiple.optional(),
+    "ext:associatedMedia": idSchemaMultiple.optional(),
+    "ext:contentLocation": idSchemaMultiple.optional(),
+    "ext:contentLocationName": valueSchemaMultiple.optional(),
+    "ext:creator": idSchemaMultiple,
+    "ext:creatorName": valueSchemaMultiple,
+    "ext:isPartOf": idSchemaOne,
+    "ext:datasetName": valueSchemaOne,
+    "ext:genre": idSchemaMultiple.optional(),
+    "ext:genreName": valueSchemaMultiple.optional(),
+    "ext:license": idSchemaOne,
+    "ext:licenseName": valueSchemaOne,
+    "ext:material": idSchemaMultiple.optional(),
+    "ext:materialName": valueSchemaMultiple.optional(),
+    "ext:publisher": idSchemaOne,
+    "ext:publisherName": valueSchemaOne,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -125,15 +129,15 @@ const heritageObjectJsonLdSchema = z
     creator: data["ext:creatorName"],
     creator_id: data["ext:creator"]?.map((id) => createIdFrom(id)),
     dataset: data["ext:datasetName"],
-    dataset_id: data["ext:isPartOf"]?.map((id) => createIdFrom(id)),
+    dataset_id: createIdFrom(data["ext:isPartOf"]),
     genre: data["ext:genreName"],
     genre_id: data["ext:genre"]?.map((id) => createIdFrom(id)),
     license: data["ext:licenseName"],
-    license_id: data["ext:license"]?.map((id) => createIdFrom(id)),
+    license_id: createIdFrom(data["ext:license"]),
     material: data["ext:materialName"],
     material_id: data["ext:material"]?.map((id) => createIdFrom(id)),
     publisher: data["ext:publisherName"],
-    publisher_id: data["ext:publisher"]?.map((id) => createIdFrom(id)),
+    publisher_id: createIdFrom(data["ext:publisher"]),
     is_based_on: {
       id: data["@id"],
       type: "CreativeWork",
@@ -144,19 +148,21 @@ const licensesJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:License"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
+    "ext:isBasedOn": idSchemaOne,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
     type: "CreativeWork",
     name: data["ext:name"]?.join("; "), // Merge into one string
+    is_based_on: data["ext:isBasedOn"],
   }));
 
 const materialJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:Material"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -177,21 +183,17 @@ const mediaObjectJsonLdSchema = z
     ),
     "ext:contentUrl": z.string(),
     "ext:thumbnailUrl": z.string(),
-    "ext:license": idSchema,
-    "ext:isBasedOn": z
-      .object({
-        "@id": z.string(),
-      })
-      .optional(),
+    "ext:license": idSchemaOne,
+    "ext:isBasedOn": idSchemaOne.optional(),
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
     type: data["@type"],
     content_url: data["ext:contentUrl"],
     thumbnail_url: data["ext:thumbnailUrl"],
-    license_id: data["ext:license"]?.map((id) => createIdFrom(id)),
+    license_id: createIdFrom(data["ext:license"]),
     is_based_on: {
-      id: data["ext:isBasedOn"]!["@id"],
+      id: data["ext:isBasedOn"],
       type: "CreativeWork",
       encoding_format: "application/ld+json;profile='http://iiif.io/api/image/3/context.json'",
     },
@@ -201,7 +203,7 @@ const publishersJsonLdSchema = z
   .object({
     "@id": z.string(),
     "@type": z.literal("ext:Organization"),
-    "ext:name": valueSchema,
+    "ext:name": valueSchemaMultiple,
   })
   .transform((data) => ({
     id: createIdFrom(data["@id"]),
@@ -267,11 +269,11 @@ export async function prepare(input: PrepareInput) {
   // used as the names of the collections in the search index
   const files = [
     {
-      name: "additional-types.jsonl",
+      name: "additional_types.jsonl",
       schema: additionalTypeJsonLdSchema,
     },
     {
-      name: "content-locations.jsonl",
+      name: "content_locations.jsonl",
       schema: contentLocationJsonLdSchema,
     },
     {
@@ -287,7 +289,7 @@ export async function prepare(input: PrepareInput) {
       schema: genreJsonLdSchema,
     },
     {
-      name: "heritage-objects.jsonl",
+      name: "heritage_objects.jsonl",
       schema: heritageObjectJsonLdSchema,
     },
     {
@@ -299,7 +301,7 @@ export async function prepare(input: PrepareInput) {
       schema: materialJsonLdSchema,
     },
     {
-      name: "media-objects.jsonl",
+      name: "media_objects.jsonl",
       schema: mediaObjectJsonLdSchema,
     },
     {
