@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
-import { EOL } from "node:os";
 import path from "node:path";
 import { chain } from "stream-chain";
 import { pick } from "stream-json/filters/pick.js";
+import { jsonlStringer } from "stream-json/jsonl/stringer.js";
 import { streamArray } from "stream-json/streamers/stream-array.js";
 import { z } from "zod";
 
@@ -222,36 +222,29 @@ type ToJsonLinesFileInput = z.input<typeof toJsonLinesFileInputSchema>;
 async function toJsonLinesFile(input: ToJsonLinesFileInput) {
   const opts = toJsonLinesFileInputSchema.parse(input);
 
-  const writeStream = createWriteStream(opts.outputFile);
   const schema = z.object({ value: input.schema });
 
-  const writeResourceToJsonlFile = (data: any) => {
+  const parseResource = (data: any) => {
     const result = schema.safeParse(data);
     if (!result.success) {
-      return;
+      return null; // Ignore data
     }
 
-    const resource = result.data.value;
-
-    // TODO: handle backpressure
-    writeStream.write(JSON.stringify(resource) + EOL);
+    return result.data.value; // Valid data
   };
 
   await new Promise<void>((resolve, reject) => {
-    const stream = createReadStream(opts.inputFile);
-    const pipeline = chain([stream, pick.withParser({ filter: "@graph" }), streamArray()]);
+    const pipeline = chain([
+      createReadStream(opts.inputFile),
+      pick.withParser({ filter: "@graph" }),
+      streamArray(),
+      parseResource,
+      jsonlStringer(),
+      createWriteStream(opts.outputFile),
+    ]);
 
-    pipeline.on("end", () => {
-      writeStream.end();
-      resolve();
-    });
-
-    pipeline.on("error", () => {
-      writeStream.end();
-      reject();
-    });
-
-    pipeline.on("data", writeResourceToJsonlFile);
+    pipeline.on("end", resolve);
+    pipeline.on("error", reject);
   });
 }
 
