@@ -64,6 +64,8 @@ prepare() {
   outputDirName=$(dirname "$outputFile")
   outputBaseFileName=$(basename "$outputFile")
 
+  mkdir -p $outputDirName
+
   nquadsFile="$outputFile.nq"
   turtleFile="$outputFile.ttl"
 
