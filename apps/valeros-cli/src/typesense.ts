@@ -46,6 +46,37 @@ const genresSchema = collection({
   ],
 });
 
+const heritageObjectsSchema = collection({
+  name: "heritage_objects",
+  enable_nested_fields: true,
+  fields: [
+    { name: "type", type: "string[]" },
+    { name: "additional_type", type: "string[]", optional: true },
+    { name: "additional_type_id", type: "string[]", optional: true },
+    { name: "content_location", type: "string[]", optional: true },
+    { name: "content_location_id", type: "string[]", optional: true },
+    { name: "creator", type: "string[]", optional: true },
+    { name: "creator_id", type: "string[]", optional: true },
+    { name: "date_created", type: "string", optional: true },
+    { name: "dataset", type: "string" },
+    { name: "dataset_id", type: "string" },
+    { name: "description", type: "string", optional: true },
+    { name: "genre", type: "string[]", optional: true },
+    { name: "genre_id", type: "string[]", optional: true },
+    { name: "is_based_on", type: "object" },
+    { name: "is_based_on.id", type: "string" },
+    { name: "is_based_on.type", type: "string" },
+    { name: "license", type: "string" },
+    { name: "license_id", type: "string" },
+    { name: "material", type: "string[]", optional: true },
+    { name: "material_id", type: "string[]", optional: true },
+    { name: "media_object_id", type: "string[]", optional: true },
+    { name: "name", type: "string" },
+    { name: "publisher", type: "string" },
+    { name: "publisher_id", type: "string" },
+  ],
+});
+
 const licensesSchema = collection({
   name: "licenses",
   fields: [
@@ -94,6 +125,7 @@ declare module "typesense-ts" {
     creators: typeof creatorsSchema.schema;
     datasets: typeof datasetsSchema.schema;
     genres: typeof genresSchema.schema;
+    heritageObjects: typeof heritageObjectsSchema.schema;
     licenses: typeof licensesSchema.schema;
     materials: typeof materialsSchema.schema;
     mediaObjects: typeof mediaObjectsSchema.schema;
@@ -108,6 +140,7 @@ export const collectionSchemas = [
   creatorsSchema,
   datasetsSchema,
   genresSchema,
+  heritageObjectsSchema,
   licensesSchema,
   materialsSchema,
   mediaObjectsSchema,
