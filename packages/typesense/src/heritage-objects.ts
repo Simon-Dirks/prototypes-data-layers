@@ -136,7 +136,7 @@ export async function search(input: SearchInput) {
     query_by: ["name", "additional_type", "genre", "material", "content_location", "creator"],
     // @ts-expect-error - Typesense lib type struggle
     exclude_fields: excludeFields,
-    // @ts-expect-error - Typesense lib does yet support join fields
+    // @ts-expect-error - Typesense lib doesn't support join fields
     include_fields: includeFields,
     facet_by: [
       "additional_type",
