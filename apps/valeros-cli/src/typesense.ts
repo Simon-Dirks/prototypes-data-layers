@@ -111,7 +111,7 @@ const mediaObjectsSchema = collection({
     { name: "type", type: "string[]" },
     { name: "content_url", type: "string" },
     { name: "thumbnail_url", type: "string" },
-    { name: "license_id", type: "string" },
+    { name: "license_id", type: "string", reference: "licenses.id" },
     { name: "is_based_on", type: "object", optional: true },
     { name: "is_based_on.id", type: "string" },
     { name: "is_based_on.type", type: "string" },

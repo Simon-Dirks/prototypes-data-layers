@@ -12,6 +12,9 @@
     },
     "fix": {},
     "format": {},
-    "lint": {}
+    "lint": {},
+    "start": {
+      "dependsOn": ["^build"]
+    }
   }
 }
