@@ -16,7 +16,7 @@ async function ingestFile(filePath: string, collectionSchema: CollectionSchema) 
     const pipeline = chain([
       createReadStream(filePath),
       jsonlParser.asStream(),
-      batch({ batchSize: 25 }),
+      batch({ batchSize: 100 }),
     ]);
 
     // Event emitters don't wait for async functions:
@@ -31,21 +31,20 @@ async function ingestFile(filePath: string, collectionSchema: CollectionSchema) 
 
     pipeline.on("error", reject);
 
-    pipeline.on("data", (data) => {
+    pipeline.on("data", async (data) => {
+      inFlightBatches++;
       const documents = data.map((pair: JsonlItem) => pair.value);
 
-      inFlightBatches++;
-
-      collectionSchema.documents
-        .import(documents, {
+      try {
+        await collectionSchema.documents.import(documents, {
           return_doc: false,
-        })
-        .finally(() => {
-          inFlightBatches--;
-          if (inFlightBatches === 0) {
-            resolve();
-          }
         });
+      } finally {
+        inFlightBatches--;
+        if (inFlightBatches === 0) {
+          resolve();
+        }
+      }
     });
   });
 }
@@ -59,10 +58,21 @@ type IngestInput = z.input<typeof ingestInputSchema>;
 export async function ingest(input: IngestInput) {
   const opts = ingestInputSchema.parse(input);
 
-  const pattern = path.join(opts.inputDir, "**/*.jsonl");
+  const filePaths: string[] = [];
+  const pattern = path.join(opts.inputDir, "*.jsonl");
+  for await (const filePath of glob(pattern)) {
+    filePaths.push(filePath);
+  }
 
-  for await (const file of glob(pattern)) {
-    const collectionName = path.parse(file).name;
+  // Sort to make sure the files are imported in the right order
+  filePaths.sort();
+
+  for (const filePath of filePaths) {
+    const fileName = path.parse(filePath).name; // Without extension
+
+    // Remove the order indicator, if any - e.g. `01.myname` => `myname`
+    const indexOfFirstDot = fileName.indexOf(".");
+    const collectionName = indexOfFirstDot !== -1 ? fileName.slice(indexOfFirstDot + 1) : fileName;
 
     const collectionSchema = collectionSchemas.find(
       (schema) => schema.schema.name === collectionName,
@@ -86,6 +96,6 @@ export async function ingest(input: IngestInput) {
     await collectionSchema.create();
 
     // Import the resources into the collection
-    await ingestFile(file, collectionSchema);
+    await ingestFile(filePath, collectionSchema);
   }
 }

@@ -75,7 +75,7 @@ WHERE {
   ?originalDataset a schema:Dataset .
   BIND(IRI(CONCAT("https://example.org/datasets/", MD5(STR(?originalDataset)))) AS ?dataset)
   BIND("Collectie Universiteitsmuseum Utrecht"@nl AS ?datasetName)
-  BIND(IRI(CONCAT("https://example.org/organizations/", MD5("https://www.umu.nl"))) AS ?publisher)
+  BIND(IRI(CONCAT("https://example.org/publishers/", MD5("https://www.umu.nl"))) AS ?publisher)
   BIND("Universiteitsmuseum Utrecht"@nl AS ?publisherName)
   BIND(IRI("http://standaarden.overheid.nl/owms/terms/geslotenlicentie") AS ?originalLicense)
   BIND(IRI(CONCAT("https://example.org/licenses/", MD5(STR(?originalLicense)))) AS ?license)
@@ -83,7 +83,7 @@ WHERE {
 
   ?cho schema:creator ?creator .
   ?creator schema:name ?creatorName .
-  BIND(IRI(CONCAT("https://example.org/persons/", MD5(STR(?creatorName)))) AS ?creatorId)
+  BIND(IRI(CONCAT("https://example.org/creators/", MD5(STR(?creatorName)))) AS ?creatorId)
 
   OPTIONAL { ?cho schema:description ?description }
   OPTIONAL { ?cho schema:dateCreated ?dateCreated }
@@ -91,19 +91,19 @@ WHERE {
   OPTIONAL {
     ?cho schema:genre ?genre .
     ?genre schema:name ?genreName .
-    BIND(IRI(CONCAT("https://example.org/terms/", MD5(STR(?genreName)))) AS ?genreId)
+    BIND(IRI(CONCAT("https://example.org/genres/", MD5(STR(?genreName)))) AS ?genreId)
   }
 
   OPTIONAL {
     ?cho schema:material ?material .
     ?material schema:name ?materialName .
-    BIND(IRI(CONCAT("https://example.org/terms/", MD5(STR(?materialName)))) AS ?materialId)
+    BIND(IRI(CONCAT("https://example.org/materials/", MD5(STR(?materialName)))) AS ?materialId)
   }
 
   OPTIONAL {
     ?cho schema:additionalType ?additionalType .
     ?additionalType schema:name ?additionalTypeName .
-    BIND(IRI(CONCAT("https://example.org/terms/", MD5(STR(?additionalTypeName)))) AS ?additionalTypeId)
+    BIND(IRI(CONCAT("https://example.org/additional-types/", MD5(STR(?additionalTypeName)))) AS ?additionalTypeId)
   }
 
   OPTIONAL {

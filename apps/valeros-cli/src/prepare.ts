@@ -258,47 +258,47 @@ type PrepareInput = z.input<typeof prepareInputSchema>;
 export async function prepare(input: PrepareInput) {
   const opts = prepareInputSchema.parse(input);
 
-  // The names of the files are significant: these are also
-  // used as the names of the collections in the search index
+  // The names of the files are significant: these determine the
+  // import order and the names of the collections in the search index
   const files = [
     {
-      name: "additional_types.jsonl",
+      name: "01.additional_types.jsonl",
       schema: additionalTypeJsonLdSchema,
     },
     {
-      name: "content_locations.jsonl",
+      name: "01.content_locations.jsonl",
       schema: contentLocationJsonLdSchema,
     },
     {
-      name: "creators.jsonl",
+      name: "01.creators.jsonl",
       schema: creatorJsonLdSchema,
     },
     {
-      name: "datasets.jsonl",
+      name: "01.datasets.jsonl",
       schema: datasetJsonLdSchema,
     },
     {
-      name: "genres.jsonl",
+      name: "01.genres.jsonl",
       schema: genreJsonLdSchema,
     },
     {
-      name: "heritage_objects.jsonl",
+      name: "02.heritage_objects.jsonl",
       schema: heritageObjectJsonLdSchema,
     },
     {
-      name: "licenses.jsonl",
+      name: "01.licenses.jsonl",
       schema: licensesJsonLdSchema,
     },
     {
-      name: "materials.jsonl",
+      name: "01.materials.jsonl",
       schema: materialJsonLdSchema,
     },
     {
-      name: "media_objects.jsonl",
+      name: "01.media_objects.jsonl",
       schema: mediaObjectJsonLdSchema,
     },
     {
-      name: "publishers.jsonl",
+      name: "01.publishers.jsonl",
       schema: publishersJsonLdSchema,
     },
   ];
