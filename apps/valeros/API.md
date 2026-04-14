@@ -13,6 +13,7 @@
 - [Resource types](#resource-types)
 - [Endpoints](#endpoints)
   - [Headers](#headers)
+  - [Get the heritage objects collection](#get-the-heritage-objects-collection)
   - [List heritage objects in a paged collection](#list-heritage-objects-in-a-paged-collection)
   - [Get a single heritage object](#get-a-single-heritage-object)
   - [Get a single place](#get-a-single-place)
@@ -113,6 +114,54 @@ All endpoints accept and return the same HTTP headers:
 | Link             | `<https://example.org/v1/context>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"` |
 | API-Version      | E.g. `1.0.0`                                                                                               |
 
+### Get the heritage objects collection
+
+#### Request
+
+`GET /v1/heritage-objects`
+
+##### URI parameters
+
+| Property | Data type | Cardinality | Description                                      |
+| -------- | --------- | ----------- | ------------------------------------------------ |
+| `q`      | String    | 0 or 1      | Search query, e.g. `lab*`                        |
+| `sort`   | String    | 0 or 1      | Sort property and order, e.g. `dateCreated:desc` |
+| `filter` | String    | 0 or more   | Facet name and value, e.g. `creator:John Doe`    |
+
+#### Response
+
+##### Example body
+
+```json
+{
+  "id": "https://example.org/v1/heritage-objects",
+  "type": "OrderedCollection",
+  "totalItems": 2008,
+  "first": "https://example.org/v1/heritage-objects/page/1?size=10",
+  "last": "https://example.org/v1/heritage-objects/page/201?size=10",
+  "facets": [
+    {
+      "type": "OrderedCollection",
+      "name": "creator",
+      "orderedItems": [
+        {
+          "type": "FacetValue",
+          "value": "John Doe",
+          "count": 34
+        },
+        {
+          "type": "FacetValue",
+          "value": "Vincent van Gogh",
+          "count": 28
+        }
+        // ... other items
+      ]
+    }
+    // ... other facets
+  ]
+}
+```
+
 ### List heritage objects in a paged collection
 
 #### Request
@@ -121,13 +170,13 @@ All endpoints accept and return the same HTTP headers:
 
 ##### URI parameters
 
-| Property | Data type | Cardinality | Description                                        |
-| -------- | --------- | ----------- | -------------------------------------------------- |
-| `page`   | Number    | 1           | Page index, e.g. `1`                               |
-| `size`   | Number    | 0 or 1      | Number of items per page, e.g. `10`                |
-| `q`      | String    | 0 or 1      | Search query, e.g. `lab*`                          |
-| `sort`   | String    | 0 or 1      | Sort property and order, e.g. `dateCreated:desc`   |
-| `filter` | String    | 0 or more   | Filter property and value, e.g. `creator:John Doe` |
+| Property | Data type | Cardinality | Description                                      |
+| -------- | --------- | ----------- | ------------------------------------------------ |
+| `page`   | Number    | 1           | Page index, e.g. `1`                             |
+| `size`   | Number    | 0 or 1      | Number of items per page, e.g. `10`              |
+| `q`      | String    | 0 or 1      | Search query, e.g. `lab*`                        |
+| `sort`   | String    | 0 or 1      | Sort property and order, e.g. `dateCreated:desc` |
+| `filter` | String    | 0 or more   | Facet name and value, e.g. `creator:John Doe`    |
 
 #### Response
 
@@ -139,7 +188,6 @@ All endpoints accept and return the same HTTP headers:
   "type": "OrderedCollectionPage",
   "next": "https://example.org/v1/heritage-objects/page/3?size=10&q=lab*&sort=dateCreated%3Adesc&filter=creator%3AJohn%20Doe",
   "prev": "https://example.org/v1/heritage-objects/page/1?size=10&q=lab*&sort=dateCreated%3Adesc&filter=creator%3AJohn%20Doe",
-  "startIndex": 20,
   "orderedItems": [
     {
       "id": "https://example.org/v1/heritage-objects/{id}",
