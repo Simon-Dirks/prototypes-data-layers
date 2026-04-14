@@ -15,7 +15,7 @@
     "format": {},
     "lint": {},
     "start": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     }
   }
 }
