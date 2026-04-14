@@ -22,7 +22,7 @@ const paramsSchema = z.object({
   page: z.coerce.number().min(1).catch(1),
 });
 
-// type Params = z.output<typeof paramsSchema>;
+type Params = z.output<typeof paramsSchema>;
 
 const querySchema = z.object({
   size: z.coerce.number().min(1).max(100).catch(10),
@@ -31,7 +31,7 @@ const querySchema = z.object({
   filter: z.union([z.string().transform((value) => [value]), z.array(z.string())]).catch([]),
 });
 
-// type Query = z.output<typeof querySchema>;
+type Query = z.output<typeof querySchema>;
 
 app.get(
   "/heritage-objects/page/:page",
@@ -49,14 +49,29 @@ app.get(
       filter: query.filter,
     });
 
-    const response = buildResponse(c, searchResult);
+    const response = buildResponse(c, params, query, searchResult);
 
     return c.json(response);
   },
 );
 
-function buildResponse(c: Context<Env>, searchResult: SearchResult) {
+function buildResponse(c: Context<Env>, params: Params, query: Query, searchResult: SearchResult) {
   const baseUri = new URL(c.req.url).origin + "/v1";
+
+  const searchParams = new URLSearchParams({
+    size: query.size.toString(),
+    q: query.q,
+  });
+
+  if (query.sort !== undefined) {
+    searchParams.set("sort", query.sort!);
+  }
+
+  if (query.filter.length > 0) {
+    query.filter.map((filter) => searchParams.append("filter", filter));
+  }
+
+  const queryString = searchParams.size > 0 ? "?" + searchParams.toString() : "";
 
   const response = {
     orderedItems: searchResult.hits.map((hit) => ({
@@ -123,7 +138,7 @@ function buildResponse(c: Context<Env>, searchResult: SearchResult) {
       isBasedOn: hit.document.is_based_on,
     })),
     partOf: {
-      id: `${baseUri}/heritage-objects/`,
+      id: `${baseUri}/heritage-objects${queryString}`,
       type: "OrderedCollection",
       totalItems: searchResult.found,
       facets: searchResult.facet_counts.map((facet) => ({
