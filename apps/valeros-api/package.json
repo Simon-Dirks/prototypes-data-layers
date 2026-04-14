@@ -1,5 +1,5 @@
 {
-  "name": "@repo/valeros",
+  "name": "@repo/valeros-api",
   "private": true,
   "type": "module",
   "scripts": {
